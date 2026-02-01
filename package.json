@@ -30,11 +30,19 @@
     "appId": "com.prompthub.pro",
     "productName": "PromptHub Pro",
     "directories": {
-      "output": "release"
+      "output": "dist"
     },
     "win": {
-      "target": "dir",
-      "artifactName": "${productName}-${version}.${ext}"
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "artifactName": "${productName} ${version} Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName} ${version} Portable.${ext}"
     },
     "files": [
       "dist/**/*",
