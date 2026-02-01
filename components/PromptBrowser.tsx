@@ -52,59 +52,59 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
   return (
     <div className="flex-1 h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 transition-colors relative">
       {/* Header Section */}
-      <div className="p-10 pb-6 flex items-center justify-between">
+      <div className="p-6 pb-4 flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">本地提示词库</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">本地提示词库</h2>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-            <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">
+            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
               {activeCategory} · 共计 {filtered.length} 项资源
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-5">
-          <div className="flex bg-slate-200/50 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex bg-slate-200/50 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <button 
               onClick={() => setViewMode('grid')}
-              className={`p-2.5 rounded-xl transition-all duration-200 ${viewMode === 'grid' ? 'bg-white dark:bg-slate-800 text-brand-600 shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`p-2 rounded-lg transition-all duration-200 ${viewMode === 'grid' ? 'bg-white dark:bg-slate-800 text-brand-600 shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'}`}
               title="网格视图"
             >
-              <LayoutGrid className="w-5 h-5" />
+              <LayoutGrid className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setViewMode('list')}
-              className={`p-2.5 rounded-xl transition-all duration-200 ${viewMode === 'list' ? 'bg-white dark:bg-slate-800 text-brand-600 shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`p-2 rounded-lg transition-all duration-200 ${viewMode === 'list' ? 'bg-white dark:bg-slate-800 text-brand-600 shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'}`}
               title="列表视图"
             >
-              <StretchHorizontal className="w-5 h-5" />
+              <StretchHorizontal className="w-4 h-4" />
             </button>
           </div>
           <button 
             onClick={onAddNew}
-            className="bg-brand-600 hover:bg-brand-500 text-white px-8 py-4 rounded-[20px] font-black flex items-center gap-3 shadow-xl shadow-brand-500/30 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            className="bg-brand-600 hover:bg-brand-500 text-white px-5 py-3 rounded-[16px] font-bold flex items-center gap-2 shadow-lg shadow-brand-500/30 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-5 h-5" />
             新建工作流
           </button>
         </div>
       </div>
 
       {/* Search Section */}
-      <div className="px-10 py-2">
+      <div className="px-6 py-2">
         <div className="relative group">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
           <input 
             type="text"
             placeholder="搜索库中的提示词标题、功能描述..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[22px] py-5 pl-16 pr-8 font-bold text-slate-800 dark:text-white focus:ring-4 focus:ring-brand-500/10 shadow-sm transition-all text-lg placeholder:text-slate-300 dark:placeholder:text-slate-700"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[18px] py-3.5 pl-12 pr-6 font-semibold text-slate-800 dark:text-white focus:ring-4 focus:ring-brand-500/10 shadow-sm transition-all text-base placeholder:text-slate-300 dark:placeholder:text-slate-700"
           />
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 overflow-y-auto p-10 custom-scrollbar relative">
+      <div className="flex-1 overflow-y-auto p-6 custom-scrollbar relative">
         {filtered.length === 0 ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none opacity-20">
             <div className="w-32 h-32 bg-slate-100 dark:bg-slate-900 rounded-[40px] flex items-center justify-center mb-6">
@@ -114,8 +114,8 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
           </div>
         ) : (
           <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8 pb-10" 
-            : "flex flex-col gap-6 pb-10"
+            ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5 pb-8" 
+            : "flex flex-col gap-4 pb-8"
           }>
             {filtered.map(p => (
               <div 
@@ -123,32 +123,32 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                 onClick={() => onSelectPrompt(p.id)}
                 className={`transition-all duration-300 cursor-pointer relative group flex ${
                   viewMode === 'grid' 
-                    ? 'flex-col p-8 rounded-[36px]' 
-                    : 'flex-row items-center p-8 rounded-[28px]'
+                    ? 'flex-col p-6 rounded-[28px]' 
+                    : 'flex-row items-center p-6 rounded-[22px]'
                 } border ${
                   selectedPromptId === p.id 
-                    ? 'border-brand-500 bg-white dark:bg-slate-900 shadow-2xl ring-4 ring-brand-500/5 z-10' 
+                    ? 'border-brand-500 bg-white dark:bg-slate-900 shadow-xl ring-2 ring-brand-500/10 z-10' 
                     : 'border-slate-200/50 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/40 hover:border-brand-300 dark:hover:border-slate-700 hover:shadow-xl hover:-translate-y-1'
                 }`}
               >
                 {/* Badge Section */}
                 <div className={`${viewMode === 'grid' ? 'mb-6 w-full' : 'mr-10 w-24 shrink-0'} flex justify-between items-center`}>
-                  <div className="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-[11px] font-black text-slate-500 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700 uppercase tracking-widest shadow-sm">
+                  <div className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-widest shadow-sm">
                     {p.category}
                   </div>
                   {viewMode === 'grid' && (
                     <div className="flex gap-2 relative z-20">
                       <button 
                         onClick={(e) => handleCopy(e, p.content, p.id)}
-                        className={`p-3 rounded-2xl transition-all shadow-md ${copiedId === p.id ? 'bg-emerald-500 text-white animate-bounce' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 active:scale-90'}`}
+                        className={`p-2.5 rounded-xl transition-all shadow-md ${copiedId === p.id ? 'bg-emerald-500 text-white animate-bounce' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 active:scale-90'}`}
                       >
-                        {copiedId === p.id ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                        {copiedId === p.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       </button>
                       <button 
                         onClick={(e) => handleDelete(e, p.id)}
-                        className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400 transition-all active:scale-90 shadow-md"
+                        className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400 transition-all active:scale-90 shadow-md"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   )}
@@ -156,10 +156,10 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
 
                 {/* Content Section */}
                 <div className="flex-1 min-w-0">
-                  <h3 className={`font-black text-slate-900 dark:text-white truncate group-hover:text-brand-600 transition-colors ${viewMode === 'grid' ? 'text-2xl mb-3' : 'text-xl mb-2'}`}>
+                  <h3 className={`font-black text-slate-900 dark:text-white truncate group-hover:text-brand-600 transition-colors ${viewMode === 'grid' ? 'text-xl mb-2.5' : 'text-lg mb-2'}`}>
                     {p.title || '未命名提示词'}
                   </h3>
-                  <p className={`text-slate-500 dark:text-slate-400 font-semibold leading-relaxed ${viewMode === 'grid' ? 'text-lg line-clamp-2' : 'text-lg truncate'}`}>
+                  <p className={`text-slate-500 dark:text-slate-400 font-semibold leading-relaxed ${viewMode === 'grid' ? 'text-base line-clamp-2' : 'text-base truncate'}`}>
                     {p.description || '暂无详细功能描述，点击编辑添加。'}
                   </p>
                   
@@ -177,7 +177,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                   )}
                   
                   {/* Time info Section */}
-                  <div className={`flex items-center gap-4 mt-4 text-[11px] font-bold text-slate-400/80 tracking-wide ${viewMode === 'grid' ? '' : 'hidden md:flex'}`}>
+                  <div className={`flex items-center gap-3 mt-3 text-[11px] font-bold text-slate-400/80 tracking-wide ${viewMode === 'grid' ? '' : 'hidden md:flex'}`}>
                     <div className="flex items-center gap-1.5 bg-slate-100/50 dark:bg-slate-800/50 px-3 py-1 rounded-lg">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{formatDate(p.createdAt)}</span>
@@ -193,18 +193,18 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
 
                 {/* List Mode Actions */}
                 {viewMode === 'list' && (
-                  <div className="flex items-center gap-4 ml-auto pl-8 border-l border-slate-100 dark:border-slate-800 relative z-30">
+                  <div className="flex items-center gap-3 ml-auto pl-6 border-l border-slate-100 dark:border-slate-800 relative z-30">
                     <button 
                       onClick={(e) => handleCopy(e, p.content, p.id)}
-                      className={`p-3.5 rounded-2xl transition-all shadow-md ${copiedId === p.id ? 'bg-emerald-500 text-white scale-110' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 active:scale-90'}`}
+                      className={`p-3 rounded-xl transition-all shadow-md ${copiedId === p.id ? 'bg-emerald-500 text-white scale-110' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 active:scale-90'}`}
                     >
-                      {copiedId === p.id ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                      {copiedId === p.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     </button>
                     <button 
                       onClick={(e) => handleDelete(e, p.id)}
-                      className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400 transition-all active:scale-90 shadow-md group"
+                      className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400 transition-all active:scale-90 shadow-md group"
                     >
-                      <Trash2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     </button>
                   </div>
                 )}

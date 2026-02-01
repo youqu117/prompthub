@@ -238,7 +238,7 @@ ${p.content}
   const activePrompt = state.prompts.find(p => p.id === state.selectedPromptId) || null;
 
   return (
-    <div className="flex h-screen bg-white dark:bg-slate-950 font-sans transition-colors overflow-hidden">
+    <div className="flex h-screen bg-white dark:bg-slate-950 font-sans text-[14px] transition-colors overflow-hidden">
       <Sidebar 
         categories={state.categories}
         activeCategory={state.activeCategory}
@@ -252,8 +252,8 @@ ${p.content}
       />
 
       {/* Main Layout Area: Browser + Editor Side-by-Side */}
-      <div className="flex-1 flex overflow-hidden">
-        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isEditorOpen ? 'mr-0' : ''}`}>
+      <div className="flex-1 flex overflow-hidden relative">
+        <div className="flex-1 flex flex-col min-w-0">
            <PromptBrowser 
             prompts={state.prompts}
             activeCategory={state.activeCategory}
@@ -269,12 +269,12 @@ ${p.content}
         </div>
 
         <div 
-           className={`transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-20 flex flex-col
-             ${isEditorOpen ? 'w-[700px] opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-full overflow-hidden border-none'}
-           `}
+          className={`absolute right-0 top-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-30 flex flex-col
+            ${isEditorOpen ? 'w-[520px] sm:w-[560px] lg:w-[600px] xl:w-[640px] opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-full overflow-hidden border-none'}
+          `}
         >
-          <div className="w-[700px] h-full flex flex-col"> 
-             <PromptEditor 
+          <div className="w-full h-full flex flex-col">
+            <PromptEditor 
               isOpen={isEditorOpen}
               onClose={() => setIsEditorOpen(false)}
               prompt={activePrompt}
