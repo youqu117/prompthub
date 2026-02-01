@@ -1,23 +1,46 @@
+
 {
-  "name": "提示词枢纽-pro-(prompthub-pro)",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "prompthub-pro",
+  "version": "1.0.0",
+  "description": "Professional Prompt Management Tool",
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "electron .",
+    "pack": "npm run build && electron-builder"
   },
   "dependencies": {
-    "@google/genai": "^1.39.0",
-    "react-dom": "^19.2.4",
-    "react": "^19.2.4",
-    "lucide-react": "^0.563.0"
+    "@google/genai": "^0.1.1",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@vitejs/plugin-react": "^4.2.1",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6"
+  },
+  "build": {
+    "appId": "com.prompthub.pro",
+    "productName": "PromptHub Pro",
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "dir",
+      "artifactName": "${productName}-${version}.${ext}"
+    },
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "package.json"
+    ],
+    "extends": null
   }
 }
