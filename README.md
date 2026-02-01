@@ -35,3 +35,31 @@
    - `PROMPTHUB_DEV_PORT=3000`
 3. 如果加载失败，窗口会直接显示失败原因，并把渲染进程的 console 输出到主进程控制台。
 4. 想自动打开 DevTools：设置 `PROMPTHUB_OPEN_DEVTOOLS=1`。
+
+### 6. 常见报错汇总指令（避免重复踩坑）
+> 复制以下命令运行，可一次性检查“依赖不可用 / 白屏 / 入口文件缺失 / 端口错误”等常见问题。
+
+```bash
+# 1) 检查 npm 依赖是否有不可用版本（例如之前的 @google/genai@^0.1.1）
+npm ls --all
+
+# 2) 检查是否能成功安装依赖（403/ETARGET 一般是镜像或版本问题）
+npm install
+
+# 3) 构建静态资源，确保 dist/index.html 存在
+npm run build
+
+# 4) 启动 Electron（如果是开发环境，可手动指定端口）
+# Windows PowerShell:
+# $env:PROMPTHUB_DEV_PORT=5173; $env:PROMPTHUB_OPEN_DEVTOOLS=1; npm run start
+# macOS/Linux:
+# PROMPTHUB_DEV_PORT=5173 PROMPTHUB_OPEN_DEVTOOLS=1 npm run start
+
+# 5) 如出现白屏，优先查看主进程控制台输出（renderer:...）和窗口内的 Load failed 信息
+```
+
+**常见问题对照：**
+- `ETARGET No matching version`：依赖版本不存在或拼错，检查 `package.json` 依赖版本。  
+- `403 Forbidden`：网络/镜像或权限限制导致 npm 无法拉取包，建议切换 registry 或使用内网镜像。  
+- 白屏 + CSP Warning：CSP 提示不是白屏原因，应看真正的报错与网络失败请求。  
+- 入口空白：确认 `dist/index.html` 是否存在，或 dev server 端口是否正确（常见为 5173）。  
