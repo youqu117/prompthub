@@ -1,0 +1,8 @@
+{
+  "name": "提示词枢纽 Pro (PromptHub Pro)",
+  "description": "一个先进的提示词管理和测试环境。组织您的 LLM 提示词，管理动态变量，并直接使用 Gemini 3 API 进行测试。专业、高效的交互界面。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
