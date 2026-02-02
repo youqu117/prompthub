@@ -28,6 +28,8 @@ function createWindow() {
     minHeight: 600,
     title: 'PromptHub Pro',
     autoHideMenuBar: true,
+    backgroundColor: '#0b1220',
+    show: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -35,9 +37,11 @@ function createWindow() {
     }
   });
 
-  mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
-    console.log(`[renderer:${level}] ${message} (${sourceId}:${line})`);
-  });
+  if (process.env.PROMPTHUB_VERBOSE_LOG === '1') {
+    mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+      console.log(`[renderer:${level}] ${message} (${sourceId}:${line})`);
+    });
+  }
 
   mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
     const message = `Load failed\nURL: ${validatedURL}\nCode: ${errorCode}\nReason: ${errorDescription}`;
@@ -49,6 +53,10 @@ function createWindow() {
     if (process.env.PROMPTHUB_OPEN_DEVTOOLS === '1') {
       mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
+  });
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
   });
 
   const distIndex = path.join(__dirname, 'dist', 'index.html');
