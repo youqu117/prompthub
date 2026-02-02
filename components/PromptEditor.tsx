@@ -21,6 +21,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [history, setHistory] = useState<PromptVersion[]>([]);
+  const [initialSnapshot, setInitialSnapshot] = useState<string>('');
 
   useEffect(() => {
     if (prompt) {
@@ -30,11 +31,33 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
       setDescription(prompt.description);
       setTags(prompt.tags || []);
       setHistory(prompt.history || []);
+      setInitialSnapshot(JSON.stringify({
+        title: prompt.title,
+        content: prompt.content,
+        category: prompt.category,
+        description: prompt.description,
+        tags: prompt.tags || [],
+        history: prompt.history || []
+      }));
     }
   }, [prompt]);
 
+  const currentSnapshot = JSON.stringify({
+    title,
+    content,
+    category,
+    description,
+    tags,
+    history
+  });
+  const isDirty = Boolean(prompt) && currentSnapshot !== initialSnapshot;
+
   const handleSave = () => {
     if (!prompt) return;
+    if (!isDirty) {
+      onClose();
+      return;
+    }
     onSave({ 
       id: prompt.id, 
       title, 
@@ -213,7 +236,12 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
         {/* Deleted button was here */}
         <button 
           onClick={handleSave}
-          className="flex-1 flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-brand-500/20 active:scale-[0.98]"
+          className={`flex-1 flex items-center justify-center gap-2 font-bold py-3 rounded-xl transition-all shadow-lg active:scale-[0.98] ${
+            isDirty
+              ? 'bg-brand-600 hover:bg-brand-500 text-white shadow-brand-500/20'
+              : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+          }`}
+          disabled={!isDirty}
         >
           <Save className="w-4 h-4" />
           保存并关闭
