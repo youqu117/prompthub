@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Plus, Grid, LayoutGrid, StretchHorizontal, Trash2, Clock, History, Tag, Copy, Check } from 'lucide-react';
+import { Search, Plus, Grid, LayoutGrid, StretchHorizontal, Trash2, Clock, History, Tag, Copy, Check, Pin } from 'lucide-react';
 import { Prompt, ViewMode } from '../types';
 
 interface PromptBrowserProps {
@@ -14,10 +14,23 @@ interface PromptBrowserProps {
   onSelectPrompt: (id: string) => void;
   onDeletePrompt: (id: string) => void;
   onAddNew: () => void;
+  onTogglePin: (id: string) => void;
+  showTimestamps: boolean;
 }
 
 const PromptBrowser: React.FC<PromptBrowserProps> = ({ 
-  prompts, activeCategory, searchQuery, setSearchQuery, selectedPromptId, viewMode, setViewMode, onSelectPrompt, onDeletePrompt, onAddNew 
+  prompts,
+  activeCategory,
+  searchQuery,
+  setSearchQuery,
+  selectedPromptId,
+  viewMode,
+  setViewMode,
+  onSelectPrompt,
+  onDeletePrompt,
+  onAddNew,
+  onTogglePin,
+  showTimestamps
 }) => {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
 
@@ -25,6 +38,11 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCat = activeCategory === '全部' || p.category === activeCategory;
     return matchesSearch && matchesCat;
+  });
+  const sorted = [...filtered].sort((a, b) => {
+    const pinDiff = (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0);
+    if (pinDiff !== 0) return pinDiff;
+    return b.updatedAt - a.updatedAt;
   });
 
   const handleCopy = (e: React.MouseEvent, content: string, id: string) => {
@@ -117,7 +135,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
             ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 pb-6" 
             : "flex flex-col gap-3 pb-6"
           }>
-            {filtered.map(p => (
+            {sorted.map(p => (
               <div 
                 key={p.id}
                 onClick={() => onSelectPrompt(p.id)}
@@ -138,6 +156,16 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                   </div>
                   {viewMode === 'grid' && (
                     <div className="flex gap-2 relative z-20">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onTogglePin(p.id);
+                        }}
+                        className={`p-2 rounded-lg transition-all shadow-md ${p.pinned ? 'bg-brand-600 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400'} active:scale-90`}
+                        title={p.pinned ? '取消置顶' : '置顶'}
+                      >
+                        <Pin className="w-4 h-4" />
+                      </button>
                       <button 
                         onClick={(e) => handleCopy(e, p.content, p.id)}
                         className={`p-2 rounded-lg transition-all shadow-md ${copiedId === p.id ? 'bg-emerald-500 text-white animate-bounce' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 active:scale-90'}`}
@@ -177,23 +205,35 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                   )}
                   
                   {/* Time info Section */}
-                  <div className={`flex items-center gap-2.5 mt-3 text-[10px] font-bold text-slate-400/80 tracking-wide ${viewMode === 'grid' ? '' : 'hidden md:flex'}`}>
-                    <div className="flex items-center gap-1.5 bg-slate-100/50 dark:bg-slate-800/50 px-3 py-1 rounded-lg">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>{formatDate(p.createdAt)}</span>
-                    </div>
-                    {p.updatedAt > p.createdAt && (
-                      <div className="flex items-center gap-1.5 bg-brand-50/50 dark:bg-brand-500/10 text-brand-500/80 px-3 py-1 rounded-lg">
-                        <History className="w-3.5 h-3.5" />
-                        <span>{formatDate(p.updatedAt)}</span>
+                  {showTimestamps && (
+                    <div className={`flex items-center gap-2.5 mt-3 text-[10px] font-bold text-slate-400/80 tracking-wide opacity-0 group-hover:opacity-100 transition-opacity ${viewMode === 'grid' ? '' : 'hidden md:flex'}`}>
+                      <div className="flex items-center gap-1.5 bg-slate-100/50 dark:bg-slate-800/50 px-3 py-1 rounded-lg">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{formatDate(p.createdAt)}</span>
                       </div>
-                    )}
-                  </div>
+                      {p.updatedAt > p.createdAt && (
+                        <div className="flex items-center gap-1.5 bg-brand-50/50 dark:bg-brand-500/10 text-brand-500/80 px-3 py-1 rounded-lg">
+                          <History className="w-3.5 h-3.5" />
+                          <span>{formatDate(p.updatedAt)}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* List Mode Actions */}
                 {viewMode === 'list' && (
                   <div className="flex items-center gap-2.5 ml-auto pl-5 border-l border-slate-100 dark:border-slate-800 relative z-30">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onTogglePin(p.id);
+                      }}
+                      className={`p-2.5 rounded-lg transition-all shadow-md ${p.pinned ? 'bg-brand-600 text-white' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400'} active:scale-90`}
+                      title={p.pinned ? '取消置顶' : '置顶'}
+                    >
+                      <Pin className="w-4 h-4" />
+                    </button>
                     <button 
                       onClick={(e) => handleCopy(e, p.content, p.id)}
                       className={`p-2.5 rounded-lg transition-all shadow-md ${copiedId === p.id ? 'bg-emerald-500 text-white scale-110' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 active:scale-90'}`}

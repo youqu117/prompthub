@@ -23,16 +23,19 @@ const CATEGORY_MAP_REVERT: Record<string, string> = {
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (!parsed.viewMode) parsed.viewMode = 'grid';
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (!parsed.viewMode) parsed.viewMode = 'grid';
+          if (typeof parsed.showTimestamps !== 'boolean') parsed.showTimestamps = true;
+          if (!parsed.textScale) parsed.textScale = 0.95;
         
-        parsed.prompts = parsed.prompts.map((p: any) => ({
-          ...p,
-          history: p.history || [],
-          tags: p.tags || []
-        }));
+          parsed.prompts = parsed.prompts.map((p: any) => ({
+            ...p,
+            history: p.history || [],
+            tags: p.tags || [],
+            pinned: p.pinned || false
+          }));
 
         // 数据迁移：将英文分类恢复为中文
         const migrateCategory = (cat: string) => CATEGORY_MAP_REVERT[cat] || cat;
@@ -62,7 +65,9 @@ const App: React.FC = () => {
       searchQuery: '',
       activeCategory: '全部',
       theme: 'system',
-      viewMode: 'grid'
+      viewMode: 'grid',
+      showTimestamps: true,
+      textScale: 0.95
     };
   });
 
@@ -91,7 +96,8 @@ const App: React.FC = () => {
       variables: [],
       createdAt: now,
       updatedAt: now,
-      history: []
+      history: [],
+      pinned: false
     };
     setState(prev => ({ ...prev, prompts: [newPrompt, ...prev.prompts], selectedPromptId: newPrompt.id }));
     setIsEditorOpen(true);
@@ -110,6 +116,13 @@ const App: React.FC = () => {
   const handleDeletePrompt = (id: string) => {
     setState(prev => ({ ...prev, prompts: prev.prompts.filter(p => p.id !== id), selectedPromptId: null }));
     setIsEditorOpen(false);
+  };
+
+  const handleTogglePin = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      prompts: prev.prompts.map(p => p.id === id ? { ...p, pinned: !p.pinned } : p)
+    }));
   };
 
   const handleSelectPrompt = (id: string) => {
@@ -231,7 +244,8 @@ ${p.content}
             variables: [],
             createdAt: parseInt(metadata.createdAt) || now,
             updatedAt: parseInt(metadata.updatedAt) || now,
-            history: parsedHistory
+            history: parsedHistory,
+            pinned: false
           });
           if (metadata.category) newCats.add(metadata.category);
         }
@@ -250,7 +264,10 @@ ${p.content}
   const activePrompt = state.prompts.find(p => p.id === state.selectedPromptId) || null;
 
   return (
-    <div className="flex h-screen bg-white dark:bg-slate-950 font-sans text-[14px] transition-colors overflow-hidden">
+    <div
+      className="flex h-screen bg-white dark:bg-slate-950 font-sans transition-colors overflow-hidden"
+      style={{ fontSize: `${state.textScale}rem` }}
+    >
       <Sidebar 
         categories={state.categories}
         activeCategory={state.activeCategory}
@@ -277,6 +294,8 @@ ${p.content}
             onSelectPrompt={handleSelectPrompt}
             onDeletePrompt={handleDeletePrompt}
             onAddNew={handleAddPrompt}
+            onTogglePin={handleTogglePin}
+            showTimestamps={state.showTimestamps}
           />
         </div>
 
@@ -302,6 +321,10 @@ ${p.content}
         <SettingsModal 
           onExport={handleExport}
           onImport={handleImport}
+          onToggleTimestamps={(value) => setState(prev => ({ ...prev, showTimestamps: value }))}
+          showTimestamps={state.showTimestamps}
+          textScale={state.textScale}
+          onChangeTextScale={(value) => setState(prev => ({ ...prev, textScale: value }))}
           onClose={() => setIsSettingsOpen(false)}
         />
       )}

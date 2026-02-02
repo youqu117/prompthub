@@ -17,6 +17,7 @@ export interface Prompt {
   lastUsedAt?: number;
   createdAt: number;
   updatedAt: number;
+  pinned?: boolean;
   history: PromptVersion[]; // 新增：版本历史记录
 }
 
@@ -30,4 +31,6 @@ export interface AppState {
   activeCategory: string;
   theme: 'light' | 'dark' | 'system';
   viewMode: ViewMode;
+  showTimestamps: boolean;
+  textScale: number;
 }
