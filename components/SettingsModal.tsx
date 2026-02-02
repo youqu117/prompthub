@@ -1,12 +1,10 @@
 
 import React, { useRef } from 'react';
-import { X, Download, Upload, Info, FileText, Eye } from 'lucide-react';
+import { X, Download, Upload, Info, FileText } from 'lucide-react';
 
 interface SettingsModalProps {
   onExport: () => void;
   onImport: (file: File) => void;
-  showTimestamps: boolean;
-  onToggleTimestamps: (value: boolean) => void;
   textScale: number;
   onChangeTextScale: (value: number) => void;
   onClose: () => void;
@@ -15,8 +13,6 @@ interface SettingsModalProps {
 const SettingsModal: React.FC<SettingsModalProps> = ({
   onExport,
   onImport,
-  showTimestamps,
-  onToggleTimestamps,
   textScale,
   onChangeTextScale,
   onClose
@@ -83,41 +79,26 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
           <section className="space-y-6">
             <div className="flex items-center gap-3">
-              <Eye className="w-5 h-5 text-brand-600" />
+              <FileText className="w-5 h-5 text-brand-600" />
               <label className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">显示偏好</label>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <button
-                onClick={() => onToggleTimestamps(!showTimestamps)}
-                className="flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-brand-300 dark:hover:border-brand-500/30 transition-all"
-              >
-                <div className="text-left">
-                  <p className="font-black text-slate-800 dark:text-slate-200">时间戳显示</p>
-                  <p className="text-xs text-slate-400 mt-1">悬停提示卡片时显示</p>
-                </div>
-                <span className={`text-xs font-black px-3 py-1 rounded-full ${showTimestamps ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                  {showTimestamps ? '已开启' : '已关闭'}
-                </span>
-              </button>
-
-              <div className="flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-                <div className="text-left">
-                  <p className="font-black text-slate-800 dark:text-slate-200">文字大小</p>
-                  <p className="text-xs text-slate-400 mt-1">调整阅读舒适度</p>
-                </div>
-                <select
-                  value={textScale}
-                  onChange={(e) => onChangeTextScale(parseFloat(e.target.value))}
-                  className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
-                  <option value={0.9}>更小</option>
-                  <option value={0.95}>较小</option>
-                  <option value={1}>默认</option>
-                  <option value={1.05}>较大</option>
-                  <option value={1.1}>更大</option>
-                </select>
+            <div className="flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+              <div className="text-left">
+                <p className="font-black text-slate-800 dark:text-slate-200">文字大小</p>
+                <p className="text-xs text-slate-400 mt-1">调整阅读舒适度</p>
               </div>
+              <select
+                value={textScale}
+                onChange={(e) => onChangeTextScale(parseFloat(e.target.value))}
+                className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-200"
+              >
+                <option value={0.9}>更小</option>
+                <option value={0.95}>较小</option>
+                <option value={1}>默认</option>
+                <option value={1.05}>较大</option>
+                <option value={1.1}>更大</option>
+              </select>
             </div>
           </section>
 

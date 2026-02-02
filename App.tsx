@@ -27,14 +27,15 @@ const App: React.FC = () => {
         try {
           const parsed = JSON.parse(saved);
           if (!parsed.viewMode) parsed.viewMode = 'grid';
-          if (typeof parsed.showTimestamps !== 'boolean') parsed.showTimestamps = true;
           if (!parsed.textScale) parsed.textScale = 0.95;
+          if (!parsed.sortMode) parsed.sortMode = 'recent';
         
           parsed.prompts = parsed.prompts.map((p: any) => ({
             ...p,
             history: p.history || [],
             tags: p.tags || [],
-            pinned: p.pinned || false
+            pinned: p.pinned || false,
+            clickCount: typeof p.clickCount === 'number' ? p.clickCount : 0
           }));
 
         // 数据迁移：将英文分类恢复为中文
@@ -66,8 +67,8 @@ const App: React.FC = () => {
       activeCategory: '全部',
       theme: 'system',
       viewMode: 'grid',
-      showTimestamps: true,
-      textScale: 0.95
+      textScale: 0.95,
+      sortMode: 'recent'
     };
   });
 
@@ -94,6 +95,7 @@ const App: React.FC = () => {
       category: state.activeCategory === '全部' ? '通用' : state.activeCategory,
       tags: [],
       variables: [],
+      clickCount: 0,
       createdAt: now,
       updatedAt: now,
       history: [],
@@ -133,7 +135,25 @@ const App: React.FC = () => {
         return { ...prev, selectedPromptId: null };
       }
       setIsEditorOpen(true);
-      return { ...prev, selectedPromptId: id };
+      return {
+        ...prev,
+        selectedPromptId: id,
+        prompts: prev.prompts.map(p => p.id === id ? { ...p, clickCount: (p.clickCount || 0) + 1 } : p)
+      };
+    });
+  };
+
+  const handleReorderPrompt = (sourceId: string, targetId: string) => {
+    setState(prev => {
+      const sourceIndex = prev.prompts.findIndex(p => p.id === sourceId);
+      const targetIndex = prev.prompts.findIndex(p => p.id === targetId);
+      if (sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex) {
+        return prev;
+      }
+      const next = [...prev.prompts];
+      const [moved] = next.splice(sourceIndex, 1);
+      next.splice(targetIndex, 0, moved);
+      return { ...prev, prompts: next };
     });
   };
 
@@ -242,6 +262,7 @@ ${p.content}
             content: contentRaw.trim(),
             tags: parsedTags,
             variables: [],
+            clickCount: 0,
             createdAt: parseInt(metadata.createdAt) || now,
             updatedAt: parseInt(metadata.updatedAt) || now,
             history: parsedHistory,
@@ -291,11 +312,13 @@ ${p.content}
             selectedPromptId={state.selectedPromptId}
             viewMode={state.viewMode}
             setViewMode={(v) => setState(prev => ({ ...prev, viewMode: v }))}
+            sortMode={state.sortMode}
+            setSortMode={(mode) => setState(prev => ({ ...prev, sortMode: mode }))}
             onSelectPrompt={handleSelectPrompt}
             onDeletePrompt={handleDeletePrompt}
             onAddNew={handleAddPrompt}
             onTogglePin={handleTogglePin}
-            showTimestamps={state.showTimestamps}
+            onReorderPrompt={handleReorderPrompt}
           />
         </div>
 
@@ -321,8 +344,6 @@ ${p.content}
         <SettingsModal 
           onExport={handleExport}
           onImport={handleImport}
-          onToggleTimestamps={(value) => setState(prev => ({ ...prev, showTimestamps: value }))}
-          showTimestamps={state.showTimestamps}
           textScale={state.textScale}
           onChangeTextScale={(value) => setState(prev => ({ ...prev, textScale: value }))}
           onClose={() => setIsSettingsOpen(false)}

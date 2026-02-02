@@ -14,6 +14,7 @@ export interface Prompt {
   category: string;
   tags: string[];
   variables: string[];
+  clickCount?: number;
   lastUsedAt?: number;
   createdAt: number;
   updatedAt: number;
@@ -31,6 +32,6 @@ export interface AppState {
   activeCategory: string;
   theme: 'light' | 'dark' | 'system';
   viewMode: ViewMode;
-  showTimestamps: boolean;
   textScale: number;
+  sortMode: 'recent' | 'click' | 'manual';
 }
