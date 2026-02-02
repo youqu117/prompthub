@@ -55,6 +55,10 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
   const handleSave = () => {
     if (!prompt) return;
     if (!isDirty) {
+      const isBlankDraft = !prompt.title && !prompt.content && !prompt.description && (prompt.tags || []).length === 0 && (prompt.history || []).length === 0;
+      if (isBlankDraft) {
+        onDelete(prompt.id);
+      }
       onClose();
       return;
     }
@@ -121,7 +125,18 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
           </h3>
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-7">Properties & Logic</p>
         </div>
-        <button onClick={onClose} className="p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all">
+        <button
+          onClick={() => {
+            if (prompt && !isDirty) {
+              const isBlankDraft = !prompt.title && !prompt.content && !prompt.description && (prompt.tags || []).length === 0 && (prompt.history || []).length === 0;
+              if (isBlankDraft) {
+                onDelete(prompt.id);
+              }
+            }
+            onClose();
+          }}
+          className="p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all"
+        >
           <X className="w-5 h-5 text-slate-400" />
         </button>
       </div>

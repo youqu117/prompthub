@@ -26,7 +26,7 @@ const App: React.FC = () => {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          if (!parsed.viewMode) parsed.viewMode = 'grid';
+          if (!parsed.viewMode) parsed.viewMode = 'list';
           if (!parsed.textScale) parsed.textScale = 0.95;
           if (!parsed.sortMode) parsed.sortMode = 'recent';
         
@@ -66,7 +66,7 @@ const App: React.FC = () => {
       searchQuery: '',
       activeCategory: '全部',
       theme: 'system',
-      viewMode: 'grid',
+      viewMode: 'list',
       textScale: 0.95,
       sortMode: 'recent'
     };
@@ -89,7 +89,7 @@ const App: React.FC = () => {
     const now = Date.now();
     const newPrompt: Prompt = {
       id: generateId(),
-      title: '未命名提示词',
+      title: '',
       content: '',
       description: '',
       category: state.activeCategory === '全部' ? '通用' : state.activeCategory,

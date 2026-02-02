@@ -172,7 +172,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                 className={`transition-all duration-300 cursor-pointer relative group flex ${
                   viewMode === 'grid' 
                     ? 'flex-col p-4 rounded-[20px]' 
-                    : 'flex-row items-center p-4 rounded-[18px]'
+                    : 'flex-col p-4 rounded-[16px]'
                 } border ${
                   selectedPromptId === p.id 
                     ? 'border-brand-500 bg-white dark:bg-slate-900 shadow-xl ring-2 ring-brand-500/10 z-10' 
@@ -180,7 +180,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                 }`}
               >
                 {/* Badge Section */}
-                <div className={`${viewMode === 'grid' ? 'mb-3 w-full' : 'mr-6 w-24 shrink-0'} flex justify-between items-center`}>
+                <div className={`${viewMode === 'grid' ? 'mb-3 w-full' : 'mb-2 w-full'} flex justify-between items-center`}>
                   <div className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-widest shadow-sm">
                     {p.category}
                   </div>
@@ -215,11 +215,13 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                 {/* Content Section */}
                 <div className="flex-1 min-w-0">
                   <h3 className={`font-black text-slate-900 dark:text-white truncate group-hover:text-brand-600 transition-colors ${viewMode === 'grid' ? 'text-base mb-1.5' : 'text-sm mb-1'}`}>
-                    {p.title || '未命名提示词'}
+                    {p.title || ''}
                   </h3>
-                  <p className={`text-slate-500 dark:text-slate-400 font-semibold leading-relaxed ${viewMode === 'grid' ? 'text-sm line-clamp-3' : 'text-sm line-clamp-2'}`}>
-                    {p.description || '暂无详细功能描述，点击编辑添加。'}
-                  </p>
+                  {p.description && (
+                    <p className={`text-slate-500 dark:text-slate-400 font-semibold leading-relaxed ${viewMode === 'grid' ? 'text-sm line-clamp-3' : selectedPromptId === p.id ? 'text-sm line-clamp-4' : 'hidden'}`}>
+                      {p.description}
+                    </p>
+                  )}
                   
                   {/* Tags Display */}
                   {p.tags && p.tags.length > 0 && (
