@@ -112,6 +112,18 @@ const App: React.FC = () => {
     setIsEditorOpen(false);
   };
 
+  const handleSelectPrompt = (id: string) => {
+    setState(prev => {
+      const isSame = prev.selectedPromptId === id;
+      if (isSame) {
+        setIsEditorOpen(false);
+        return { ...prev, selectedPromptId: null };
+      }
+      setIsEditorOpen(true);
+      return { ...prev, selectedPromptId: id };
+    });
+  };
+
   const handleAddCategory = () => {
     let baseName = "新分类";
     let name = baseName;
@@ -262,15 +274,15 @@ ${p.content}
             selectedPromptId={state.selectedPromptId}
             viewMode={state.viewMode}
             setViewMode={(v) => setState(prev => ({ ...prev, viewMode: v }))}
-            onSelectPrompt={(id) => { setState(prev => ({ ...prev, selectedPromptId: id })); setIsEditorOpen(true); }}
+            onSelectPrompt={handleSelectPrompt}
             onDeletePrompt={handleDeletePrompt}
             onAddNew={handleAddPrompt}
           />
         </div>
 
         <div 
-          className={`absolute right-0 top-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-30 flex flex-col
-            ${isEditorOpen ? 'w-[520px] sm:w-[560px] lg:w-[600px] xl:w-[640px] opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-full overflow-hidden border-none'}
+          className={`absolute top-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-30 flex flex-col
+            ${isEditorOpen ? 'right-0 w-[520px] sm:w-[560px] lg:w-[600px] xl:w-[640px] opacity-100' : '-right-[520px] sm:-right-[560px] lg:-right-[600px] xl:-right-[640px] w-[520px] sm:w-[560px] lg:w-[600px] xl:w-[640px] opacity-0 pointer-events-none'}
           `}
         >
           <div className="w-full h-full flex flex-col">
