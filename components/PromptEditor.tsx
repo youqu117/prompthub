@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Sparkles, X, History } from 'lucide-react';
 import { Prompt, PromptVersion } from '../types';
 import { extractVariables, generateId } from '../lib/utils';
+import { TAG_PRESETS, CARD_COLOR_PRESETS } from '../lib/presets';
 
 interface PromptEditorProps {
   isOpen: boolean;
@@ -19,10 +20,10 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
   const [category, setCategory] = useState('通用');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
   const [history, setHistory] = useState<PromptVersion[]>([]);
   const [initialSnapshot, setInitialSnapshot] = useState<string>('');
   const [clickCount, setClickCount] = useState(0);
+  const [cardColor, setCardColor] = useState('default');
 
   useEffect(() => {
     if (prompt) {
@@ -33,6 +34,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
       setTags(prompt.tags || []);
       setHistory(prompt.history || []);
       setClickCount(prompt.clickCount || 0);
+      setCardColor(prompt.cardColor || 'default');
       setInitialSnapshot(JSON.stringify({
         title: prompt.title,
         content: prompt.content,
@@ -40,7 +42,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
         description: prompt.description,
         tags: prompt.tags || [],
         history: prompt.history || [],
-        clickCount: prompt.clickCount || 0
+        clickCount: prompt.clickCount || 0,
+        cardColor: prompt.cardColor || 'default'
       }));
     }
   }, [prompt]);
@@ -52,7 +55,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
     description,
     tags,
     history,
-    clickCount
+    clickCount,
+    cardColor
   });
   const isDirty = Boolean(prompt) && currentSnapshot !== initialSnapshot;
 
@@ -74,22 +78,13 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
       tags,
       history,
       clickCount,
+      cardColor,
       variables: extractVariables(content) 
     }, true);
   };
 
-  const handleAddTag = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && newTag.trim()) {
-      e.preventDefault();
-      if (!tags.includes(newTag.trim())) {
-        setTags([...tags, newTag.trim()]);
-      }
-      setNewTag('');
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(t => t !== tagToRemove));
+  const toggleTag = (tagId: string) => {
+    setTags(prev => (prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]));
   };
 
   const createSnapshot = () => {
@@ -170,24 +165,54 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
                 </select>
               </div>
               <div className="space-y-2">
-                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">标签 (回车添加)</label>
-                 <div className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1 min-h-[40px] flex flex-wrap gap-2 items-center focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
-                    {tags.map(tag => (
-                      <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 text-xs font-bold">
-                        {tag}
-                        <button onClick={() => removeTag(tag)} className="ml-1 hover:text-red-500"><X className="w-3 h-3" /></button>
-                      </span>
-                    ))}
-                    <input 
-                      type="text"
-                      value={newTag}
-                      onChange={e => setNewTag(e.target.value)}
-                      onKeyDown={handleAddTag}
-                      className="bg-transparent border-none outline-none text-sm font-medium text-slate-700 dark:text-slate-200 min-w-[60px] flex-1 h-7"
-                      placeholder={tags.length === 0 ? "Tag..." : ""}
-                    />
+                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">标签 (点击选择)</label>
+                 <div className="grid grid-cols-2 gap-2">
+                   {TAG_PRESETS.map(tag => {
+                     const isSelected = tags.includes(tag.id);
+                     return (
+                       <button
+                         key={tag.id}
+                         type="button"
+                         onClick={() => toggleTag(tag.id)}
+                         className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
+                           isSelected
+                             ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
+                             : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-brand-300'
+                         }`}
+                       >
+                         <span className="flex items-center gap-2">
+                           <span className="text-sm">{tag.icon}</span>
+                           {tag.label}
+                         </span>
+                         {isSelected && <span className="text-[10px]">已选</span>}
+                       </button>
+                     );
+                   })}
                  </div>
               </div>
+           </div>
+
+           <div className="space-y-2">
+             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">卡片颜色</label>
+             <div className="flex flex-wrap gap-2">
+               {CARD_COLOR_PRESETS.map(color => {
+                 const isActive = cardColor === color.id;
+                 return (
+                   <button
+                     key={color.id}
+                     type="button"
+                     onClick={() => setCardColor(color.id)}
+                     className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
+                       isActive
+                         ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
+                         : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-brand-300'
+                     }`}
+                   >
+                     {color.label}
+                   </button>
+                 );
+               })}
+             </div>
            </div>
 
            <div className="space-y-2">

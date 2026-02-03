@@ -67,3 +67,53 @@ body {
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.5);
 }
+
+.prompt-card[data-card-color='mist'] {
+  background-color: rgba(240, 249, 255, 0.8);
+  border-color: rgba(186, 230, 253, 0.8);
+}
+
+.prompt-card[data-card-color='sunrise'] {
+  background-color: rgba(255, 247, 237, 0.85);
+  border-color: rgba(254, 215, 170, 0.8);
+}
+
+.prompt-card[data-card-color='mint'] {
+  background-color: rgba(236, 253, 245, 0.85);
+  border-color: rgba(167, 243, 208, 0.8);
+}
+
+.prompt-card[data-card-color='lilac'] {
+  background-color: rgba(245, 243, 255, 0.85);
+  border-color: rgba(221, 214, 254, 0.85);
+}
+
+.prompt-card[data-card-color='peach'] {
+  background-color: rgba(255, 241, 242, 0.85);
+  border-color: rgba(254, 205, 211, 0.85);
+}
+
+.dark .prompt-card[data-card-color='mist'] {
+  background-color: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.dark .prompt-card[data-card-color='sunrise'] {
+  background-color: rgba(30, 27, 17, 0.7);
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.dark .prompt-card[data-card-color='mint'] {
+  background-color: rgba(14, 26, 22, 0.7);
+  border-color: rgba(52, 211, 153, 0.28);
+}
+
+.dark .prompt-card[data-card-color='lilac'] {
+  background-color: rgba(24, 22, 34, 0.7);
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+.dark .prompt-card[data-card-color='peach'] {
+  background-color: rgba(36, 20, 23, 0.7);
+  border-color: rgba(251, 113, 133, 0.3);
+}

@@ -15,6 +15,7 @@ export interface Prompt {
   tags: string[];
   variables: string[];
   clickCount?: number;
+  cardColor?: string;
   lastUsedAt?: number;
   createdAt: number;
   updatedAt: number;
@@ -31,6 +32,7 @@ export interface AppState {
   selectedPromptId: string | null;
   searchQuery: string;
   activeCategory: string;
+  activeTag: string | null;
   theme: 'light' | 'dark' | 'system';
   colorTheme: 'ocean' | 'emerald' | 'sunset' | 'slate';
   viewMode: ViewMode;

@@ -46,6 +46,7 @@ const App: React.FC = () => {
             tags: p.tags || [],
             pinned: p.pinned || false,
             clickCount: typeof p.clickCount === 'number' ? p.clickCount : 0,
+            cardColor: p.cardColor || 'default',
             isDraft: false
           }));
 
@@ -64,6 +65,7 @@ const App: React.FC = () => {
         }));
 
         parsed.activeCategory = migrateCategory(parsed.activeCategory);
+        if (typeof parsed.activeTag === 'undefined') parsed.activeTag = null;
 
         return parsed;
       } catch (e) {
@@ -76,6 +78,7 @@ const App: React.FC = () => {
       selectedPromptId: null,
       searchQuery: '',
       activeCategory: '全部',
+      activeTag: null,
       theme: 'system',
       colorTheme: 'ocean',
       viewMode: 'list',
@@ -124,6 +127,7 @@ const App: React.FC = () => {
       tags: [],
       variables: [],
       clickCount: 0,
+      cardColor: 'default',
       createdAt: now,
       updatedAt: now,
       history: [],
@@ -237,6 +241,7 @@ const App: React.FC = () => {
       'createdAt',
       'updatedAt',
       'copyCount',
+      'cardColor',
       'pinned',
       'history'
     ];
@@ -250,6 +255,7 @@ const App: React.FC = () => {
       p.createdAt,
       p.updatedAt,
       p.clickCount || 0,
+      p.cardColor || 'default',
       p.pinned ? '1' : '0',
       JSON.stringify(p.history || [])
     ]);
@@ -347,6 +353,7 @@ const App: React.FC = () => {
           tags: parsedTags,
           variables: [],
           clickCount: Number(data.copyCount) || 0,
+          cardColor: data.cardColor || 'default',
           createdAt: Number(data.createdAt) || now,
           updatedAt: Number(data.updatedAt) || now,
           history: parsedHistory,
@@ -391,13 +398,15 @@ const App: React.FC = () => {
            <PromptBrowser 
             prompts={state.prompts}
             activeCategory={state.activeCategory}
-            searchQuery={state.searchQuery}
-            setSearchQuery={(q) => setState(prev => ({ ...prev, searchQuery: q }))}
+           searchQuery={state.searchQuery}
+           setSearchQuery={(q) => setState(prev => ({ ...prev, searchQuery: q }))}
             selectedPromptId={state.selectedPromptId}
             viewMode={state.viewMode}
             setViewMode={(v) => setState(prev => ({ ...prev, viewMode: v }))}
             sortMode={state.sortMode}
             setSortMode={(mode) => setState(prev => ({ ...prev, sortMode: mode }))}
+            activeTag={state.activeTag}
+            setActiveTag={(tag) => setState(prev => ({ ...prev, activeTag: tag }))}
             onSelectPrompt={handleSelectPrompt}
             onDeletePrompt={handleDeletePrompt}
             onAddNew={handleAddPrompt}

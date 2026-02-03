@@ -2,6 +2,7 @@
 import React from 'react';
 import { Search, Plus, Grid, LayoutGrid, StretchHorizontal, Trash2, Tag, Copy, Check, Pin } from 'lucide-react';
 import { Prompt, ViewMode } from '../types';
+import { TAG_PRESETS } from '../lib/presets';
 
 interface PromptBrowserProps {
   prompts: Prompt[];
@@ -11,6 +12,8 @@ interface PromptBrowserProps {
   selectedPromptId: string | null;
   viewMode: ViewMode;
   setViewMode: (v: ViewMode) => void;
+  activeTag: string | null;
+  setActiveTag: (tag: string | null) => void;
   onSelectPrompt: (id: string) => void;
   onDeletePrompt: (id: string) => void;
   onAddNew: () => void;
@@ -32,6 +35,8 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
   selectedPromptId,
   viewMode,
   setViewMode,
+  activeTag,
+  setActiveTag,
   onSelectPrompt,
   onDeletePrompt,
   onAddNew,
@@ -51,8 +56,10 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
   const filtered = prompts.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCat = activeCategory === '全部' || p.category === activeCategory;
-    return matchesSearch && matchesCat;
+    const matchesTag = !activeTag || (p.tags || []).includes(activeTag);
+    return matchesSearch && matchesCat && matchesTag;
   });
+  const tagMap = React.useMemo(() => new Map(TAG_PRESETS.map(tag => [tag.id, tag])), []);
   const sorted = React.useMemo(() => {
     if (sortMode === 'manual') {
       return filtered;
@@ -158,6 +165,36 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
         </div>
       </div>
 
+      <div className="px-5 pb-3 flex flex-wrap gap-2 items-center" data-no-clear>
+        <button
+          onClick={() => setActiveTag(null)}
+          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${
+            activeTag === null
+              ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
+              : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-brand-300'
+          }`}
+        >
+          全部标签
+        </button>
+        {TAG_PRESETS.map(tag => {
+          const isActive = activeTag === tag.id;
+          return (
+            <button
+              key={tag.id}
+              onClick={() => setActiveTag(isActive ? null : tag.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 ${
+                isActive
+                  ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
+                  : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-brand-300'
+              }`}
+            >
+              <span>{tag.icon}</span>
+              {tag.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Content Section */}
       <div className="flex-1 overflow-y-auto p-5 custom-scrollbar relative">
         {filtered.length === 0 ? (
@@ -182,6 +219,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
               <div 
                 key={p.id}
                 data-prompt-card
+                data-card-color={p.cardColor || 'default'}
                 onClick={() => onSelectPrompt(p.id)}
                 draggable={sortMode === 'manual'}
                 onDragStart={(e) => {
@@ -213,7 +251,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                   setDragOverId(null);
                 }}
                 style={{ maxWidth: `${cardWidth * 360}px`, minHeight: `${cardHeight * 120}px` }}
-                className={`transition-all duration-300 cursor-pointer relative group flex ${
+                className={`prompt-card transition-all duration-300 cursor-pointer relative group flex ${
                   viewMode === 'grid' 
                     ? 'flex-col p-4 rounded-[20px]' 
                     : 'flex-col p-4 rounded-[16px]'
@@ -273,12 +311,15 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                   {/* Tags Display */}
                   {p.tags && p.tags.length > 0 && (
                      <div className="flex flex-wrap gap-2 mt-4">
-                       {p.tags.slice(0, 4).map(tag => (
-                         <span key={tag} className="inline-flex items-center px-2 py-1 rounded-md bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] font-bold">
-                           <Tag className="w-3 h-3 mr-1" />
-                           {tag}
-                         </span>
-                       ))}
+                       {p.tags.slice(0, 4).map(tagId => {
+                         const tag = tagMap.get(tagId);
+                         return (
+                           <span key={tagId} className="inline-flex items-center px-2 py-1 rounded-md bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] font-bold">
+                             <Tag className="w-3 h-3 mr-1" />
+                             {tag ? `${tag.icon} ${tag.label}` : tagId}
+                           </span>
+                         );
+                       })}
                        {p.tags.length > 4 && <span className="text-[10px] text-slate-400 self-center">+{p.tags.length - 4}</span>}
                      </div>
                   )}
