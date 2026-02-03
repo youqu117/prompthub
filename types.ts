@@ -14,9 +14,12 @@ export interface Prompt {
   category: string;
   tags: string[];
   variables: string[];
+  clickCount?: number;
   lastUsedAt?: number;
   createdAt: number;
   updatedAt: number;
+  pinned?: boolean;
+  isDraft?: boolean;
   history: PromptVersion[]; // 新增：版本历史记录
 }
 
@@ -29,5 +32,10 @@ export interface AppState {
   searchQuery: string;
   activeCategory: string;
   theme: 'light' | 'dark' | 'system';
+  colorTheme: 'ocean' | 'emerald' | 'sunset' | 'slate';
   viewMode: ViewMode;
+  textScale: number;
+  sortMode: 'recent' | 'click' | 'manual';
+  cardWidth: number;
+  cardHeight: number;
 }
