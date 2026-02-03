@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import PromptBrowser from './components/PromptBrowser';
 import PromptEditor from './components/PromptEditor';
 import SettingsModal from './components/SettingsModal';
+import ToastStack from './components/ToastStack';
 import { Prompt, AppState } from './types';
 import { generateId } from './lib/utils';
 
@@ -18,6 +19,12 @@ const CATEGORY_MAP_REVERT: Record<string, string> = {
   'Research': '科研', 
   'Creative': '创意写作',
   'Productivity': '生产力'
+};
+
+type Toast = {
+  id: string;
+  message: string;
+  variant?: 'success' | 'error' | 'info';
 };
 
 const App: React.FC = () => {
@@ -81,6 +88,7 @@ const App: React.FC = () => {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -96,6 +104,14 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
+
+  const pushToast = (message: string, variant: Toast['variant'] = 'info') => {
+    const id = generateId();
+    setToasts(prev => [...prev, { id, message, variant }]);
+    window.setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 3000);
+  };
 
   const handleAddPrompt = () => {
     const now = Date.now();
@@ -246,6 +262,7 @@ const App: React.FC = () => {
     a.href = url;
     a.download = `PromptHub_Backup_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
+    pushToast('导出完成，已生成 CSV 备份。', 'success');
   };
 
   const handleImport = (file: File) => {
@@ -339,7 +356,7 @@ const App: React.FC = () => {
         prompts: [...newPrompts, ...prev.prompts],
         categories: Array.from(newCats)
       }));
-      alert(`成功导入 ${newPrompts.length} 条提示词。`);
+      pushToast(`成功导入 ${newPrompts.length} 条提示词。`, 'success');
     };
     reader.readAsText(file);
   };
@@ -420,6 +437,7 @@ const App: React.FC = () => {
           onClose={() => setIsSettingsOpen(false)}
         />
       )}
+      <ToastStack toasts={toasts} onDismiss={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
     </div>
   );
 };
