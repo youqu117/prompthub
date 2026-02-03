@@ -17,6 +17,7 @@ interface PromptBrowserProps {
   onTogglePin: (id: string) => void;
   onReorderPrompt: (sourceId: string, targetId: string) => void;
   onCopyPrompt: (id: string) => void;
+  onClearSelection: () => void;
   cardWidth: number;
   cardHeight: number;
   sortMode: 'recent' | 'click' | 'manual';
@@ -37,6 +38,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
   onTogglePin,
   onReorderPrompt,
   onCopyPrompt,
+  onClearSelection,
   cardWidth,
   cardHeight,
   sortMode,
@@ -81,10 +83,21 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
     onDeletePrompt(id);
   };
 
+  const handleBackgroundClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-prompt-card]') || target.closest('[data-no-clear]')) {
+      return;
+    }
+    onClearSelection();
+  };
+
   return (
-    <div className="flex-1 h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 transition-colors relative text-sm">
+    <div
+      className="flex-1 h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 transition-colors relative text-sm"
+      onClick={handleBackgroundClick}
+    >
       {/* Header Section */}
-      <div className="p-5 pb-3 flex items-center justify-between">
+      <div className="p-5 pb-3 flex items-center justify-between" data-no-clear>
         <div className="space-y-1">
           <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">本地提示词库</h2>
           <div className="flex items-center gap-2">
@@ -132,7 +145,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
       </div>
 
       {/* Search Section */}
-      <div className="px-5 py-2">
+      <div className="px-5 py-2" data-no-clear>
         <div className="relative group">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
           <input 
@@ -168,6 +181,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
             {sorted.map(p => (
               <div 
                 key={p.id}
+                data-prompt-card
                 onClick={() => onSelectPrompt(p.id)}
                 draggable={sortMode === 'manual'}
                 onDragStart={(e) => {

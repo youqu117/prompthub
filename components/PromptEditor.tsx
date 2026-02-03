@@ -22,6 +22,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
   const [newTag, setNewTag] = useState('');
   const [history, setHistory] = useState<PromptVersion[]>([]);
   const [initialSnapshot, setInitialSnapshot] = useState<string>('');
+  const [clickCount, setClickCount] = useState(0);
 
   useEffect(() => {
     if (prompt) {
@@ -31,13 +32,15 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
       setDescription(prompt.description);
       setTags(prompt.tags || []);
       setHistory(prompt.history || []);
+      setClickCount(prompt.clickCount || 0);
       setInitialSnapshot(JSON.stringify({
         title: prompt.title,
         content: prompt.content,
         category: prompt.category,
         description: prompt.description,
         tags: prompt.tags || [],
-        history: prompt.history || []
+        history: prompt.history || [],
+        clickCount: prompt.clickCount || 0
       }));
     }
   }, [prompt]);
@@ -48,7 +51,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
     category,
     description,
     tags,
-    history
+    history,
+    clickCount
   });
   const isDirty = Boolean(prompt) && currentSnapshot !== initialSnapshot;
 
@@ -69,6 +73,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
       description, 
       tags,
       history,
+      clickCount,
       variables: extractVariables(content) 
     }, true);
   };
@@ -183,6 +188,29 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
                     />
                  </div>
               </div>
+           </div>
+
+           <div className="space-y-2">
+             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">复制次数</label>
+             <div className="flex items-center gap-2">
+               <button
+                 type="button"
+                 onClick={() => setClickCount(prev => Math.max(0, prev - 1))}
+                 className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 font-black hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+               >
+                 -
+               </button>
+               <div className="flex-1 text-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2 px-3.5 font-semibold text-slate-700 dark:text-slate-200">
+                 {clickCount}
+               </div>
+               <button
+                 type="button"
+                 onClick={() => setClickCount(prev => prev + 1)}
+                 className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 font-black hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+               >
+                 +
+               </button>
+             </div>
            </div>
            
            <div className="space-y-2">

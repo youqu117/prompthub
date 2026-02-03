@@ -178,6 +178,11 @@ const App: React.FC = () => {
     });
   };
 
+  const handleClearSelection = () => {
+    setIsEditorOpen(false);
+    setState(prev => ({ ...prev, selectedPromptId: null }));
+  };
+
   const handleReorderPrompt = (sourceId: string, targetId: string) => {
     setState(prev => {
       const sourceIndex = prev.prompts.findIndex(p => p.id === sourceId);
@@ -399,6 +404,7 @@ const App: React.FC = () => {
             onTogglePin={handleTogglePin}
             onReorderPrompt={handleReorderPrompt}
             onCopyPrompt={handleCopyPrompt}
+            onClearSelection={handleClearSelection}
             cardWidth={state.cardWidth}
             cardHeight={state.cardHeight}
           />
