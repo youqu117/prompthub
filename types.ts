@@ -32,6 +32,7 @@ export interface AppState {
   searchQuery: string;
   activeCategory: string;
   theme: 'light' | 'dark' | 'system';
+  colorTheme: 'ocean' | 'emerald' | 'sunset' | 'slate';
   viewMode: ViewMode;
   textScale: number;
   sortMode: 'recent' | 'click' | 'manual';

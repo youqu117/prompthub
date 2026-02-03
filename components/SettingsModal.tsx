@@ -7,6 +7,8 @@ interface SettingsModalProps {
   onImport: (file: File) => void;
   textScale: number;
   onChangeTextScale: (value: number) => void;
+  colorTheme: 'ocean' | 'emerald' | 'sunset' | 'slate';
+  onChangeColorTheme: (value: 'ocean' | 'emerald' | 'sunset' | 'slate') => void;
   onClose: () => void;
 }
 
@@ -15,6 +17,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onImport,
   textScale,
   onChangeTextScale,
+  colorTheme,
+  onChangeColorTheme,
   onClose
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +61,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div className="text-center">
                   <span className="block font-black text-slate-800 dark:text-white">导出备份</span>
-                  <span className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Markdown 格式</span>
+                  <span className="text-[11px] font-bold text-slate-400 mt-1 uppercase">CSV 格式</span>
                 </div>
               </button>
 
@@ -70,10 +74,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div className="text-center">
                   <span className="block font-black text-slate-800 dark:text-white">导入数据</span>
-                  <span className="text-[11px] font-bold text-slate-400 mt-1 uppercase">支持解析 MD 文档</span>
+                  <span className="text-[11px] font-bold text-slate-400 mt-1 uppercase">支持解析 CSV 文档</span>
                 </div>
               </button>
-              <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".md,.markdown" />
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".csv" />
             </div>
           </section>
 
@@ -83,22 +87,41 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               <label className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">显示偏好</label>
             </div>
 
-            <div className="flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-              <div className="text-left">
-                <p className="font-black text-slate-800 dark:text-slate-200">文字大小</p>
-                <p className="text-xs text-slate-400 mt-1">调整阅读舒适度</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+                <div className="text-left">
+                  <p className="font-black text-slate-800 dark:text-slate-200">文字大小</p>
+                  <p className="text-xs text-slate-400 mt-1">调整阅读舒适度</p>
+                </div>
+                <select
+                  value={textScale}
+                  onChange={(e) => onChangeTextScale(parseFloat(e.target.value))}
+                  className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-200"
+                >
+                  <option value={0.9}>更小</option>
+                  <option value={0.95}>较小</option>
+                  <option value={1}>默认</option>
+                  <option value={1.05}>较大</option>
+                  <option value={1.1}>更大</option>
+                </select>
               </div>
-              <select
-                value={textScale}
-                onChange={(e) => onChangeTextScale(parseFloat(e.target.value))}
-                className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-200"
-              >
-                <option value={0.9}>更小</option>
-                <option value={0.95}>较小</option>
-                <option value={1}>默认</option>
-                <option value={1.05}>较大</option>
-                <option value={1.1}>更大</option>
-              </select>
+
+              <div className="flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+                <div className="text-left">
+                  <p className="font-black text-slate-800 dark:text-slate-200">主题配色</p>
+                  <p className="text-xs text-slate-400 mt-1">切换主色调</p>
+                </div>
+                <select
+                  value={colorTheme}
+                  onChange={(e) => onChangeColorTheme(e.target.value as 'ocean' | 'emerald' | 'sunset' | 'slate')}
+                  className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-200"
+                >
+                  <option value="ocean">海洋蓝</option>
+                  <option value="emerald">翡翠绿</option>
+                  <option value="sunset">日落橙</option>
+                  <option value="slate">冷灰</option>
+                </select>
+              </div>
             </div>
           </section>
 
@@ -107,7 +130,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <div>
               <h4 className="font-black text-brand-900 dark:text-brand-400 mb-1">导入说明</h4>
               <p className="text-sm font-medium text-brand-800/70 dark:text-brand-400/70 leading-relaxed">
-                导入功能仅支持由本应用导出的 Markdown 格式文件。文件采用 YAML 前置元数据结构，请确保导入文件的格式匹配。
+                导入功能仅支持由本应用导出的 CSV 格式文件。请保持列名不变（如 title、description、copyCount）。
               </p>
             </div>
           </div>

@@ -40,6 +40,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
 }) => {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
   const [draggingId, setDraggingId] = React.useState<string | null>(null);
+  const [dragOverId, setDragOverId] = React.useState<string | null>(null);
 
   const filtered = prompts.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -159,10 +160,24 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                 key={p.id}
                 onClick={() => onSelectPrompt(p.id)}
                 draggable={sortMode === 'manual'}
-                onDragStart={() => setDraggingId(p.id)}
+                onDragStart={(e) => {
+                  e.dataTransfer.effectAllowed = 'move';
+                  setDraggingId(p.id);
+                }}
+                onDragEnd={() => {
+                  setDraggingId(null);
+                  setDragOverId(null);
+                }}
                 onDragOver={(e) => {
                   if (sortMode === 'manual') {
                     e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    setDragOverId(p.id);
+                  }
+                }}
+                onDragLeave={() => {
+                  if (sortMode === 'manual') {
+                    setDragOverId(null);
                   }
                 }}
                 onDrop={(e) => {
@@ -171,12 +186,13 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                     onReorderPrompt(draggingId, p.id);
                   }
                   setDraggingId(null);
+                  setDragOverId(null);
                 }}
                 className={`transition-all duration-300 cursor-pointer relative group flex ${
                   viewMode === 'grid' 
                     ? 'flex-col p-4 rounded-[20px]' 
                     : 'flex-col p-4 rounded-[16px]'
-                } ${draggingId === p.id ? 'opacity-60 scale-[0.98]' : ''} border ${
+                } ${draggingId === p.id ? 'opacity-60 scale-[0.98]' : ''} ${dragOverId === p.id ? 'ring-2 ring-brand-300/60' : ''} border ${
                   selectedPromptId === p.id 
                     ? 'border-brand-500 bg-white dark:bg-slate-900 shadow-xl ring-2 ring-brand-500/10 z-10' 
                     : 'border-slate-200/50 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/40 hover:border-brand-300 dark:hover:border-slate-700 hover:shadow-xl hover:-translate-y-1'
@@ -188,7 +204,10 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                     {p.category}
                   </div>
                   {viewMode === 'grid' && (
-                    <div className="flex gap-2 relative z-20">
+                    <div className="flex items-center gap-2 relative z-20">
+                      <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 px-2 py-1 rounded-lg bg-slate-100/60 dark:bg-slate-800/60" title="复制次数">
+                        {p.clickCount || 0}
+                      </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -244,6 +263,9 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                 {/* List Mode Actions */}
                 {viewMode === 'list' && (
                   <div className="flex items-center gap-2.5 ml-auto pl-5 border-l border-slate-100 dark:border-slate-800 relative z-30">
+                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 px-2 py-1 rounded-lg bg-slate-100/60 dark:bg-slate-800/60" title="复制次数">
+                      {p.clickCount || 0}
+                    </span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
