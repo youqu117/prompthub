@@ -50,16 +50,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-[320px] h-screen border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col p-6 space-y-8 flex-shrink-0">
+    <div className="w-[240px] h-screen border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col p-4 space-y-6 flex-shrink-0 text-sm">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
-          <Command className="w-6 h-6" />
+        <div className="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+          <Command className="w-5 h-5" />
         </div>
-        <h1 className="text-xl font-black dark:text-white tracking-tight">PromptHub</h1>
+        <h1 className="text-lg font-black dark:text-white tracking-tight">PromptHub</h1>
       </div>
 
       <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-2">
-        <div className="flex items-center justify-between px-2 mb-4">
+        <div className="flex items-center justify-between px-2 mb-3">
           <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">分类导航</span>
           <button 
             onClick={handleAdd} 
@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               >
                 <button
                   onClick={() => setActiveCategory(cat)}
-                  className={`flex-1 flex items-center gap-3 px-4 py-3 text-sm font-bold text-left outline-none bg-transparent border-none cursor-pointer overflow-hidden ${
+                  className={`flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-bold text-left outline-none bg-transparent border-none cursor-pointer overflow-hidden ${
                     activeCategory === cat 
                       ? 'text-white' 
                       : 'text-slate-600 dark:text-slate-400'
@@ -131,15 +131,15 @@ const Sidebar: React.FC<SidebarProps> = ({
         ))}
       </div>
 
-      <div className="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-2">
-        <button onClick={onToggleTheme} className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+      <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+        <button onClick={onToggleTheme} className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
           <div className="flex items-center gap-3">
             <ThemeIcon className="w-4 h-4" />
             视觉主题
           </div>
           <span className="text-[10px] uppercase font-black opacity-50">{theme}</span>
         </button>
-        <button onClick={onOpenSettings} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+        <button onClick={onOpenSettings} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
           <Settings className="w-4 h-4" />
           系统偏好设置
         </button>
