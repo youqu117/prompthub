@@ -155,10 +155,16 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
             <p className="text-xl font-black text-slate-300 dark:text-slate-800 tracking-[0.3em] uppercase">库中暂无内容</p>
           </div>
         ) : (
-          <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 pb-6" 
-            : "flex flex-col gap-3 pb-6"
-          }>
+          <div
+            className={viewMode === 'grid'
+              ? "grid gap-4 pb-6"
+              : "flex flex-col gap-3 pb-6"
+            }
+            style={viewMode === 'grid'
+              ? { gridTemplateColumns: `repeat(auto-fit, minmax(${cardWidth * 260}px, 1fr))` }
+              : undefined
+            }
+          >
             {sorted.map(p => (
               <div 
                 key={p.id}
