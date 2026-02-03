@@ -16,6 +16,7 @@ interface PromptBrowserProps {
   onAddNew: () => void;
   onTogglePin: (id: string) => void;
   onReorderPrompt: (sourceId: string, targetId: string) => void;
+  onCopyPrompt: (id: string) => void;
   sortMode: 'recent' | 'click' | 'manual';
   setSortMode: (mode: 'recent' | 'click' | 'manual') => void;
 }
@@ -33,6 +34,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
   onAddNew,
   onTogglePin,
   onReorderPrompt,
+  onCopyPrompt,
   sortMode,
   setSortMode
 }) => {
@@ -66,6 +68,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
     navigator.clipboard.writeText(content);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+    onCopyPrompt(id);
   };
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
@@ -110,7 +113,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
             title="排序方式"
           >
             <option value="recent">最近更新</option>
-            <option value="click">点击次数</option>
+            <option value="click">复制次数</option>
             <option value="manual">手动拖拽</option>
           </select>
           <button 
@@ -173,7 +176,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                   viewMode === 'grid' 
                     ? 'flex-col p-4 rounded-[20px]' 
                     : 'flex-col p-4 rounded-[16px]'
-                } border ${
+                } ${draggingId === p.id ? 'opacity-60 scale-[0.98]' : ''} border ${
                   selectedPromptId === p.id 
                     ? 'border-brand-500 bg-white dark:bg-slate-900 shadow-xl ring-2 ring-brand-500/10 z-10' 
                     : 'border-slate-200/50 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/40 hover:border-brand-300 dark:hover:border-slate-700 hover:shadow-xl hover:-translate-y-1'
@@ -218,7 +221,7 @@ const PromptBrowser: React.FC<PromptBrowserProps> = ({
                     {p.title || ''}
                   </h3>
                   {p.description && (
-                    <p className={`text-slate-500 dark:text-slate-400 font-semibold leading-relaxed ${viewMode === 'grid' ? 'text-sm line-clamp-3' : selectedPromptId === p.id ? 'text-sm line-clamp-4' : 'hidden'}`}>
+                    <p className={`text-slate-500 dark:text-slate-400 font-semibold leading-relaxed ${viewMode === 'grid' ? 'text-sm line-clamp-3' : 'text-sm line-clamp-2'}`}>
                       {p.description}
                     </p>
                   )}

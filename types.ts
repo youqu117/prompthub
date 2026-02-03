@@ -19,6 +19,7 @@ export interface Prompt {
   createdAt: number;
   updatedAt: number;
   pinned?: boolean;
+  isDraft?: boolean;
   history: PromptVersion[]; // 新增：版本历史记录
 }
 

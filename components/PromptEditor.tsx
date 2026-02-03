@@ -55,8 +55,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
   const handleSave = () => {
     if (!prompt) return;
     if (!isDirty) {
-      const isBlankDraft = !prompt.title && !prompt.content && !prompt.description && (prompt.tags || []).length === 0 && (prompt.history || []).length === 0;
-      if (isBlankDraft) {
+      if (prompt.isDraft) {
         onDelete(prompt.id);
       }
       onClose();
@@ -127,11 +126,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ isOpen, onClose, prompt, ca
         </div>
         <button
           onClick={() => {
-            if (prompt && !isDirty) {
-              const isBlankDraft = !prompt.title && !prompt.content && !prompt.description && (prompt.tags || []).length === 0 && (prompt.history || []).length === 0;
-              if (isBlankDraft) {
-                onDelete(prompt.id);
-              }
+            if (prompt && !isDirty && prompt.isDraft) {
+              onDelete(prompt.id);
             }
             onClose();
           }}

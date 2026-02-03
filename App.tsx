@@ -35,7 +35,8 @@ const App: React.FC = () => {
             history: p.history || [],
             tags: p.tags || [],
             pinned: p.pinned || false,
-            clickCount: typeof p.clickCount === 'number' ? p.clickCount : 0
+            clickCount: typeof p.clickCount === 'number' ? p.clickCount : 0,
+            isDraft: false
           }));
 
         // 数据迁移：将英文分类恢复为中文
@@ -99,7 +100,8 @@ const App: React.FC = () => {
       createdAt: now,
       updatedAt: now,
       history: [],
-      pinned: false
+      pinned: false,
+      isDraft: true
     };
     setState(prev => ({ ...prev, prompts: [newPrompt, ...prev.prompts], selectedPromptId: newPrompt.id }));
     setIsEditorOpen(true);
@@ -108,7 +110,7 @@ const App: React.FC = () => {
   const handleUpdatePrompt = (updated: Partial<Prompt>, shouldClose: boolean = true) => {
     setState(prev => ({
       ...prev,
-      prompts: prev.prompts.map(p => p.id === updated.id ? { ...p, ...updated, updatedAt: Date.now() } : p)
+      prompts: prev.prompts.map(p => p.id === updated.id ? { ...p, ...updated, updatedAt: Date.now(), isDraft: false } : p)
     }));
     if (shouldClose) {
       setIsEditorOpen(false);
@@ -127,6 +129,13 @@ const App: React.FC = () => {
     }));
   };
 
+  const handleCopyPrompt = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      prompts: prev.prompts.map(p => p.id === id ? { ...p, clickCount: (p.clickCount || 0) + 1 } : p)
+    }));
+  };
+
   const handleSelectPrompt = (id: string) => {
     setState(prev => {
       const isSame = prev.selectedPromptId === id;
@@ -137,8 +146,7 @@ const App: React.FC = () => {
       setIsEditorOpen(true);
       return {
         ...prev,
-        selectedPromptId: id,
-        prompts: prev.prompts.map(p => p.id === id ? { ...p, clickCount: (p.clickCount || 0) + 1 } : p)
+        selectedPromptId: id
       };
     });
   };
@@ -266,7 +274,8 @@ ${p.content}
             createdAt: parseInt(metadata.createdAt) || now,
             updatedAt: parseInt(metadata.updatedAt) || now,
             history: parsedHistory,
-            pinned: false
+            pinned: false,
+            isDraft: false
           });
           if (metadata.category) newCats.add(metadata.category);
         }
@@ -319,6 +328,7 @@ ${p.content}
             onAddNew={handleAddPrompt}
             onTogglePin={handleTogglePin}
             onReorderPrompt={handleReorderPrompt}
+            onCopyPrompt={handleCopyPrompt}
           />
         </div>
 
